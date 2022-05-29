@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -20,10 +21,12 @@ public class SalesController {
     public void setSalesService(SalesService salesService) { this.salesService= salesService; }
 
     @PostMapping(value = "/add/{warehouse_id}",  consumes = "application/json", produces = "application/json")
-    public Sales addSales(@RequestBody Sales newSales, @PathVariable Long warehouse_id){ return salesService.addSales(newSales, warehouse_id); }
+    public Sales addSales(@RequestBody Sales newSales, @PathVariable Long warehouse_id){
+        return salesService.addSales(newSales, warehouse_id);
+    }
 
-    @DeleteMapping(value = "/delete/{id}")
-    public void deleteSales(@PathVariable("id") long id){
+    @DeleteMapping(value = "/delete/")
+    public void deleteSales(@RequestParam("id") long id){
         try{
             salesService.deleteSales(id);
         }catch (ChargesNotFoundExceptions exceptions){
@@ -31,19 +34,37 @@ public class SalesController {
         }
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Sales>> getAllSales(){
-        List<Sales> list = salesService.listSales();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+    @GetMapping("/hello")
+    public ModelAndView getHello(){
+        ModelAndView model = new ModelAndView();
+        String message = "hello world!";
+        model.addObject("message", message);
+        model.setViewName("index");
+        return model;
     }
 
+    @GetMapping("/all")
+    public ModelAndView getAllSales(){
+        ModelAndView model = new ModelAndView();
+        List<Sales> list = salesService.listSales();
+        model.addObject("sales", list);
+        model.setViewName("SalesView");
+        return model;
+    }
+
+    @GetMapping("/id")
+    public ModelAndView getSales(@RequestParam("id") long id){
+        ModelAndView model = new ModelAndView();
+        model.addObject("sales", salesService.findById(id));
+        model.setViewName("SalesView");
+        return model;
+    }
     @GetMapping("/{id}")
-    public ResponseEntity<Sales> getSales(@PathVariable("id") long id){
-        try{
-            return new ResponseEntity<>(salesService.findById(id), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sales not found");
-        }
+    public ModelAndView getSales2(@PathVariable("id") long id){
+        ModelAndView model = new ModelAndView();
+        model.addObject("sales", salesService.findById(id));
+        model.setViewName("SalesView");
+        return model;
     }
 
     @GetMapping("sort/asc")
@@ -64,31 +85,19 @@ public class SalesController {
         }
     }
 
-    @PutMapping("update/amount/{id}/{amount}")
-    public ResponseEntity<Sales> updateSalesAmount(@PathVariable("id") long id, @PathVariable int amount){
-        try{
-            return new ResponseEntity(salesService.updateAmount(id, amount), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sales not found");
-        }
+    @PostMapping("update/amount")
+    public void updateSalesAmount(@RequestParam("id") long id, @RequestParam int amount){
+        salesService.updateAmount(id, amount);
     }
 
-    @PutMapping("/update/quantity/{id}")
-    public ResponseEntity<Sales> updateSalesQuantity(@PathVariable("id") long id, int quantity){
-        try{
-            return new ResponseEntity(salesService.updateQuantity(id, quantity), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sales not found");
-        }
+    @PostMapping("update/quantity")
+    public void updateSalesQuantity(@RequestParam("id") long id, @RequestParam int quantity){
+       salesService.updateQuantity(id, quantity);
     }
 
-    @PutMapping("/update/date/{id}")
-    public ResponseEntity<Sales> updateSalesDate(@PathVariable("id") long id, String tm){
-        try{
-            return new ResponseEntity(salesService.updateSalesDate(id, tm), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sales not found");
-        }
+    @PostMapping("update/date")
+    public void updateSalesDate(@RequestParam("id") long id, @RequestParam("sales_date") String tm){
+        salesService.updateSalesDate(id, tm);
     }
 
     @GetMapping("/max_amount_sales_products")

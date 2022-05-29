@@ -43,9 +43,8 @@ public interface SalesRepository extends CrudRepository<Sales, Long> {
     @Query(value = "UPDATE sales SET amount=:amount WHERE id=:id", nativeQuery = true)
     List<Sales> updateAmount(long id, int amount);
 
-    @Query(value = "UPDATE sales SET sales_date =: tm WHERE id =: id", nativeQuery = true)
+    @Query(value = "UPDATE sales SET sales_date =:tm WHERE id =:id", nativeQuery = true)
     List<Sales> updateSalesDate(long id, String tm);
-
 
     //hard requests
     @Query(value = "select warehouse.name, sales.quantity, sales.amount, sales.sales_date" +

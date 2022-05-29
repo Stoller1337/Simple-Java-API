@@ -20,9 +20,9 @@ public interface SalesService {
     List<Sales> sortASCById();//y
     List<Sales> sortDESCById();//y
     Sales findById(long id);//y
-    List<Sales> updateQuantity(long id, int quantity);//y
-    List<Sales> updateAmount(long id, int amount);//y
-    List<Sales> updateSalesDate(long id, String tm);//y
+    void updateQuantity(long id, int quantity);//y
+    void updateAmount(long id, int amount);//y
+    void updateSalesDate(long id, String tm);//y
 
     void deleteSales(long id);//y
 

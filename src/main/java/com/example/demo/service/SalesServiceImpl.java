@@ -57,23 +57,20 @@ public class SalesServiceImpl implements SalesService{
     }
 
     @Override
-    public List<Sales> updateQuantity(long id, int quantity){
+    public void updateQuantity(long id, int quantity){
         Optional<Sales> optionalSales = salesRepository.findById(id);
         if(optionalSales.isPresent()){
-            return salesRepository.updateQuantity(id, quantity);
+            salesRepository.updateQuantity(id, quantity);
         } else{
             throw new ChargesNotFoundExceptions("Sales not found");
         }
     }
 
     @Override
-    public List<Sales> updateAmount(long id, int amount) {
+    public void updateAmount(long id, int amount) {
         Optional<Sales> optionalSales = salesRepository.findById(id);
         if(optionalSales.isPresent()){
-            Sales sales = findById(id);
-            sales.setAmount(amount);
-            salesRepository.save(sales);
-            return salesRepository.listSales();
+            salesRepository.updateAmount(id, amount);
         } else{
             throw new ChargesNotFoundExceptions("Sales not found");
         }
@@ -110,10 +107,10 @@ public class SalesServiceImpl implements SalesService{
     }
 
     @Override
-    public List<Sales> updateSalesDate(long id, String tm) {
+    public void updateSalesDate(long id, String tm) {
         Optional<Sales> optionalSales = salesRepository.findById(id);
         if(optionalSales.isPresent()){
-            return salesRepository.updateSalesDate(id, tm);
+            salesRepository.updateSalesDate(id, tm);
         } else{
             throw new ChargesNotFoundExceptions("Sales not found");
         }

@@ -59,7 +59,7 @@ public class ChargesServiceImpl implements ChargesService{
     }
 
     @Override
-    public List<Charges> updateChargesDate(long id, LocalDateTime tm) {
+    public List<Charges> updateChargesDate(long id, String tm) {
         Optional<Charges> optionalCharges = chargesRepository.findById(id);
         if(optionalCharges.isPresent()){
             return chargesRepository.updateChargesDate(id, tm);

@@ -37,30 +37,41 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    @Autowired
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+    }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.httpBasic().disable()
+//        http.httpBasic().disable()
+//                .csrf().disable()
+//                .formLogin().disable()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authorizeRequests()
+        //.antMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
+        http
                 .csrf().disable()
-                .formLogin().disable()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .httpBasic()
                 .and()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.POST,"/api/auth/singin").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/**").permitAll()
-                    .antMatchers(HttpMethod.POST, "/api/sales/add/{warehouse_id}").hasRole("ADMIN")
-                    .antMatchers(HttpMethod.POST, "/api/**").hasRole("USER")
-                    .antMatchers(HttpMethod.PUT,"/api/**").hasRole("USER")
-                    .antMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
+
+                .antMatchers(HttpMethod.GET, "/api/sales/hello").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/sales/add/{warehouse_id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/**").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/api/sales/update/date").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
                 .and()
-                .apply(new JwtSecurityConfigurer(jwtProvider));
-    }
+                .formLogin().permitAll();
 
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+        //.anyRequest().authenticated()
+        //.and();
+        //.apply(new JwtSecurityConfigurer(jwtProvider));
     }
 }

@@ -19,7 +19,7 @@ public interface ChargesService {
 
     Charges findById(long id);//y
     List<Charges> updateAmount(long id, int amount);//y
-    List<Charges> updateChargesDate(long id, LocalDateTime tm);//y
+    List<Charges> updateChargesDate(long id, String tm);//y
 
     List<Object> listChargesItems();//y
     List<Object> listBigCharges();//y

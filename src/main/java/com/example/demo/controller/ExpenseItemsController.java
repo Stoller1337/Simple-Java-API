@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -19,12 +20,12 @@ public class ExpenseItemsController {
     public void setExpenseItemsService(ExpenseItemsService expenseItemsService) { this.expenseItemsService = expenseItemsService; }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public ExpenseItems addExpenseItems(@RequestBody ExpenseItems newExpenseItems){
+    public ExpenseItems addExpenseItems(ExpenseItems newExpenseItems){
         return expenseItemsService.addExpenseItems(newExpenseItems);
     }
 
-    @DeleteMapping(value = "/delete/{id}", consumes = "application/json", produces = "application/json")
-    public void deleteExpenseItems(@PathVariable("id") long id){
+    @DeleteMapping(value = "/delete", consumes = "application/json", produces = "application/json")
+    public void deleteExpenseItems(@RequestParam("id") long id){
         try{
             expenseItemsService.deleteExpenseItems(id);
         }catch (ChargesNotFoundExceptions exceptions){
@@ -33,18 +34,20 @@ public class ExpenseItemsController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ExpenseItems>> getAllExpenseItems(){
+    public ModelAndView getAllExpenseItems(){
+        ModelAndView model = new ModelAndView();
         List<ExpenseItems> list = expenseItemsService.listExpenseItems();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        model.addObject("expense_items", list);
+        model.setViewName("ExpenseItems");
+        return model;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ExpenseItems> getExpenseItems(@PathVariable("id") long id){
-        try{
-            return new ResponseEntity<>(expenseItemsService.findById(id), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Charges not found");
-        }
+    @GetMapping("/id")
+    public ModelAndView getExpenseItems(@RequestParam("id") long id){
+        ModelAndView model = new ModelAndView();
+        model.addObject("expense_items", expenseItemsService.findById(id));
+        model.setViewName("ExpenseItems");
+        return model;
     }
 
     @GetMapping("/sort/asc")
@@ -65,10 +68,10 @@ public class ExpenseItemsController {
         }
     }
 
-    @PostMapping("/update/name/{id}")
-    public ResponseEntity<ExpenseItems> updateExpenseItemsName(@PathVariable("id") long id, String name){
+    @PostMapping("/update/name")
+    public void updateExpenseItemsName(@RequestParam("id") long id,@RequestParam("name") String name){
         try{
-            return new ResponseEntity(expenseItemsService.updateName(id, name), HttpStatus.OK);
+            expenseItemsService.updateName(id, name);
         }catch(ChargesNotFoundExceptions exception){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Expense items not found");
         }

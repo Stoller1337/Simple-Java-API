@@ -17,7 +17,7 @@ public class Charges {
     private int amount;
 
     @Column(name = "charge_date", nullable = false)
-    private LocalDateTime charge_date;
+    private String charge_date;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = ExpenseItems.class)
     @JoinColumn(name = "expense_item_id")
@@ -25,7 +25,7 @@ public class Charges {
 
     public Charges(){}
 
-    public Charges(int amount, LocalDateTime charge_date, ExpenseItems expense_items) {
+    public Charges(int amount, String charge_date, ExpenseItems expense_items) {
         this.id = id;
         this.amount = amount;
         this.charge_date = charge_date;
@@ -48,11 +48,16 @@ public class Charges {
         this.amount = amount;
     }
 
-    public LocalDateTime getChargeDate() {
+    public String getChargeDate() {
         return charge_date;
     }
 
-    public void setChargeDate(LocalDateTime charge_date) {
+    public void setChargeDate(String charge_date) {
         this.charge_date = charge_date;
     }
+
+    public long getExpense_items() {
+        return expense_items.getId();
+    }
+
 }

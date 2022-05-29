@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Charges;
+import com.example.demo.entity.Warehouse;
 import com.example.demo.exception.ChargesNotFoundExceptions;
 import com.example.demo.service.ChargesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,12 +23,12 @@ public class ChargesController {
     public void setChargesService(ChargesService chargesService) { this.chargesService = chargesService; }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public Charges addCharges(@RequestBody Charges newCharges){
+    public Charges addCharges(Charges newCharges){
         return chargesService.addCharges(newCharges);
     }
 
-    @DeleteMapping(value = "/delete/{id}", consumes = "charges/json", produces = "charges/json")
-    public void deleteCharges(@PathVariable("id") long id){
+    @DeleteMapping(value = "/delete", consumes = "application/json", produces = "application/json")
+    public void deleteCharges(@RequestParam("id") long id){
         try{
             chargesService.deleteCharges(id);
         }catch (ChargesNotFoundExceptions exceptions){
@@ -35,18 +37,19 @@ public class ChargesController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Charges>> getAllCharges(){
+    public ModelAndView getAllCharges(){
+        ModelAndView model = new ModelAndView();
         List<Charges> list = chargesService.listCharges();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        model.addObject("charges", list).setViewName("charges");
+        return model;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Charges> getCharges(@PathVariable("id") long id){
-        try{
-            return new ResponseEntity<>(chargesService.findById(id), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Charges not found");
-        }
+    @GetMapping("/id")
+    public ModelAndView getCharges(@RequestParam("id") long id){
+        ModelAndView model = new ModelAndView();
+        model.addObject("warehouse", chargesService.findById(id));
+        model.setViewName("charges");
+        return model;
     }
 
     @GetMapping("/sort/asc")
@@ -67,19 +70,19 @@ public class ChargesController {
         }
     }
 
-    @PostMapping("/update/amount/{id}")
-    public ResponseEntity<Charges> updateChargesAmount(@PathVariable("id") long id, int amount){
+    @PostMapping("/update/amount")
+    public void updateChargesAmount(@RequestParam("id") long id, @RequestParam("amount") int amount){
         try{
-            return new ResponseEntity(chargesService.updateAmount(id, amount), HttpStatus.OK);
+            chargesService.updateAmount(id, amount);
         }catch(ChargesNotFoundExceptions exception){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Charges not found");
         }
     }
 
-    @PostMapping("/update/quantity/{id}")
-    public ResponseEntity<Charges> updateChargesDate(@PathVariable("id") long id, LocalDateTime tm){
+    @PostMapping("/update/date")
+    public void updateChargesDate(@RequestParam("id") long id, @RequestParam("charge_date") String tm){
         try{
-            return new ResponseEntity(chargesService.updateChargesDate(id, tm), HttpStatus.OK);
+            chargesService.updateChargesDate(id, tm);
         }catch(ChargesNotFoundExceptions exception){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Charges not found");
         }

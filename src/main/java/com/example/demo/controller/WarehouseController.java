@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -20,12 +21,12 @@ public class WarehouseController {
     public void setWarehouseService(WarehouseService warehouseService) { this.warehouseService = warehouseService; }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
-    public Warehouse addWarehouse(@RequestBody Warehouse newWarehouse){
+    public Warehouse addWarehouse(Warehouse newWarehouse){
         return warehouseService.addWarehouse(newWarehouse);
     }
 
-    @DeleteMapping(value = "/deleteWarehouse/{id}", consumes = "application/json", produces = "application/json")
-    public void deleteWarehouses(@PathVariable("id") long id){
+    @DeleteMapping(value = "/delete", consumes = "application/json", produces = "application/json")
+    public void deleteWarehouses(@RequestParam("id") long id){
         try{
             warehouseService.deleteWarehouse(id);
         }catch (ChargesNotFoundExceptions exceptions){
@@ -34,18 +35,19 @@ public class WarehouseController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Warehouse>> getAllWarehouses(){
+    public ModelAndView getAllWarehouses(){
+        ModelAndView model = new ModelAndView();
         List<Warehouse> list = warehouseService.listWarehouse();
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        model.addObject("warehouse", list).setViewName("WAREHOUSE");
+        return model;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Warehouse> getWarehouses(@PathVariable("id") long id){
-        try{
-            return new ResponseEntity<>(warehouseService.findById(id), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Charges not found");
-        }
+    @GetMapping("/id")
+    public ModelAndView getWarehouses(@RequestParam("id") long id){
+        ModelAndView model = new ModelAndView();
+        model.addObject("warehouse", warehouseService.findById(id));
+        model.setViewName("warehouse");
+        return model;
     }
 
     @GetMapping("/sort/asc")
@@ -66,33 +68,19 @@ public class WarehouseController {
         }
     }
 
-    @PutMapping("/update/quantity/{id}")
-    public ResponseEntity<Warehouse> updateWarehousesQuantity(@PathVariable("id") long id, int quantity){
-        try{
-            return new ResponseEntity(warehouseService.updateQuantity(id, quantity), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
-        }
+    @PostMapping("/update/quantity")
+    public void updateWarehousesQuantity(@RequestParam("id") long id, @RequestParam("quantity") int quantity){
+        warehouseService.updateQuantity(id, quantity);
     }
 
-    @PutMapping("/update/amount/{id}")
-    public ResponseEntity<Warehouse> updateWarehousesAmount(@PathVariable("id") long id, int amount){
-        try{
-            return new ResponseEntity(warehouseService.updateAmount(id, amount), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
-        }
+    @PostMapping("/update/amount")
+    public void updateWarehousesAmount(@RequestParam("id") long id, @RequestParam("amount") int amount){
+        warehouseService.updateAmount(id, amount);
     }
 
-    @PutMapping("/update/name/{id}")
-    public ResponseEntity<Warehouse> updateWarehousesName(@PathVariable("id") long id, String name){
-        try{
-            return new ResponseEntity(warehouseService.updateName(id, name), HttpStatus.OK);
-        }catch(ChargesNotFoundExceptions exception){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Warehouse not found");
-        }
+    @PostMapping("/update/name")
+    public void updateWarehousesName(@RequestParam("id") long id, @RequestParam String name){
+        warehouseService.updateName(id, name);
     }
-
-
 
 }

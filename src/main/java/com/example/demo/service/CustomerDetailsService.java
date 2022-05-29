@@ -36,12 +36,12 @@ public class CustomerDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findUserByusername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("UserName not found"));
+
     }
 
     public Customer createCustomer(Customer customer){
         try {
             Customer newCustomer = new Customer(customer);
-            System.out.println("PASSWORD ------------------------------------------------->" + customer.getPassword());
             newCustomer.setPassword(bCryptPasswordEncoder.encode(newCustomer.getPassword()));
             newCustomer.setRoles(Collections.singleton(roleRepository.getById(1L)));
             return userRepository.save(newCustomer);

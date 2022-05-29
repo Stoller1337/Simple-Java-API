@@ -30,7 +30,7 @@ public interface ExpenseItemsRepository extends CrudRepository<ExpenseItems, Lon
     @Query(value = "SELECT * FROM expense_items i WHERE i.id=:id", nativeQuery = true)
     Optional<ExpenseItems> findById(long id);
 
-    @Query(value = "UPDATE expense_items SET name =: name WHERE id =: id", nativeQuery = true)
+    @Query(value = "UPDATE expense_items SET name =:name WHERE id =:id", nativeQuery = true)
     List<ExpenseItems> updateName(long id, String name);
 
 

@@ -71,6 +71,8 @@ public class Sales {
         this.salesDate = sales_date;
     }
 
+    public Long getWarehouseId_id(){return warehouseId.getId();}
+
     public Warehouse getWarehouseId() {
         return warehouseId;
     }

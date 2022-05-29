@@ -16,8 +16,8 @@ public interface WarehouseRepository extends CrudRepository<Warehouse, Long> {
     @Query(value = "SELECT * FROM warehouse", nativeQuery = true)
     List<Warehouse> listWarehouse();
 
-    @Query(value = "SELECT * FROM warehouse i WHERE i.id=:id", nativeQuery = true)
-    Optional<Warehouse> findById(Long id);
+//    @Query(value = "SELECT * FROM warehouse WHERE id=:?1", nativeQuery = true)
+//    Optional<Warehouse> findById(Long id);
 
     //delete
     @Query(value = "DELETE FROM warehouse WHERE id=:id", nativeQuery = true)
@@ -39,7 +39,7 @@ public interface WarehouseRepository extends CrudRepository<Warehouse, Long> {
     List<Warehouse> sortDESCById();
 
     //find
-    @Query(value = "SELECT FROM warehouse i WHERE i.id=:id", nativeQuery = true)
+    @Query(value = "SELECT * FROM warehouse i WHERE i.id=:id", nativeQuery = true)
     Optional<Warehouse> findById(long id);
 
 //    @Query(value = "SELECT FROM warehouse i WHERE i.quantity=:quantity", nativeQuery = true)
@@ -53,13 +53,13 @@ public interface WarehouseRepository extends CrudRepository<Warehouse, Long> {
 
 
     //update
-    @Query(value = "UPDATE warehouse SET quantity =: quantity WHERE id =: id", nativeQuery = true)
+    @Query(value = "UPDATE warehouse SET quantity=:quantity WHERE id=:id", nativeQuery = true)
     List<Warehouse> updateQuantity(long id, int quantity);
 
-    @Query(value = "UPDATE warehouse SET amount =: amount WHERE id =: id", nativeQuery = true)
+    @Query(value = "UPDATE warehouse SET amount=:amount WHERE id =:id", nativeQuery = true)
     List<Warehouse> updateAmount(long id, int amount);
 
-    @Query(value = "UPDATE warehouse SET name =: name WHERE id =: id", nativeQuery = true)
+    @Query(value = "UPDATE warehouse SET name=:name WHERE id=:id", nativeQuery = true)
     List<Warehouse> updateName(long id, String name);
 
 

@@ -37,7 +37,7 @@ public interface ChargesRepository extends CrudRepository<Charges, Long> {
     List<Charges> updateAmount(long id, int amount);
 
     @Query(value = "UPDATE charges SET charge_date =: tm WHERE id =: id", nativeQuery = true)
-    List<Charges> updateChargesDate(long id, LocalDateTime tm);
+    List<Charges> updateChargesDate(long id, String tm);
 
     //hard request
     @Query(value = "SELECT expense_items.name, charges.amount, charges.charge_date " +
