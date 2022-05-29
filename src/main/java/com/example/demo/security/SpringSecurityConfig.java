@@ -46,14 +46,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-//        http.httpBasic().disable()
-//                .csrf().disable()
-//                .formLogin().disable()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authorizeRequests()
-        //.antMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
         http
                 .csrf().disable()
                 .httpBasic()
@@ -70,8 +62,5 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().permitAll();
 
-        //.anyRequest().authenticated()
-        //.and();
-        //.apply(new JwtSecurityConfigurer(jwtProvider));
     }
 }
